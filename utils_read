@@ -1,0 +1,185 @@
+######################################
+# Modules
+######################################
+import numpy as np 
+import pandas as pd 
+
+pip install pandas_ods_reader
+from pandas_ods_reader import read_ods 
+
+######################################
+# Chemins
+######################################
+
+
+######################################
+# Variables 
+######################################
+
+
+######################################
+# Fonctions
+######################################
+
+def chercheindex(colonne, listecolonne):
+  index = 0
+  for i in range(len(listecolonne)):
+    if colonne == listecolonne[i]:
+      index = i
+  return index
+
+def convertsize(stock2, colonnecategorie = 4, colonnesize = 7,colonnename = 2, colonnemarque =1):
+  stock3 = stock2
+  for i in range(stock2.shape[0]):
+    categorie = stock2[i,colonnecategorie]
+    if categorie == 'Chaussures de sport femme' or categorie == 'Chaussures homme':
+      size = stock2[i,colonnesize]
+      newsize = size
+      name = stock2[i,colonnename]
+      marque = stock2[i,colonnemarque]
+      if marque != 'Keyena':
+        #try :
+         # newsize = float(size)
+        #except :
+            for j in range(len(pbsize)):
+              if size == pbsize[j]:
+                newsize = truesize[j]
+      stock3[i,7]=newsize
+  return stock3
+
+def trishoes(stock, colonnecategorie = 4):
+  stocktri=[]
+  for i in range(stock.shape[0]):
+    categorie = stock[i,colonnecategorie]
+    if categorie == 'Chaussures de sport femme' or categorie == 'Chaussures homme':
+      stocktri.append(stock[i,:])
+  return np.array(stocktri)
+
+def trihoka(stock, colonnemarque = 1, colonnecategorie = 4):
+  stocktri=[]
+  for i in range(stock.shape[0]):
+    categorie = stock[i,colonnecategorie]
+    marque = stock[i,colonnemarque]
+    if categorie == 'Chaussures de sport femme' or categorie == 'Chaussures homme':
+      if marque == 'Hoka One One':
+        stocktri.append(stock[i,:])
+  return np.array(stocktri)
+
+def idshoes(stock,colonnecategorie = 4):
+  shoefinder = np.full(stock.shape[0], False)
+  for i in range(stock.shape[0]):
+    categorie = stock[i,colonnecategorie]
+    if categorie == 'Chaussures de sport femme' or categorie == 'Chaussures homme':
+      shoefinder[i]=True
+  return shoefinder
+
+def cleanname(stock,shoefinder, nnom = nonom):
+  tablestock = np.copy(stock)
+  #global nonom
+  for i in range(tablestock.shape[0]):
+    if shoefinder[i]:
+      name = tablestock[i,nnom]
+      for truc in badnames:
+        mid = ' '+truc+' '
+
+        if mid in name:
+          mid = mid[:-1]
+          name = name.replace(' '+mid+' ',' ')
+          tablestock[i,nnom]= name
+        else :
+          longueur = len(truc)
+          if name[-longueur:] == truc:
+            print(name)
+            name = name[:-longueur-1]
+            print(name)
+            tablestock[i,nnom]= name
+  return tablestock
+
+def removegenre(stock2, shoefinder, nnom = nonom) :
+  stock = np.copy(stock2)
+  #global nonom
+  for i in range(stock.shape[0]):
+    if shoefinder[i]:
+
+      name = stock[i,nnom]
+      print(name)
+      if name[-2]=='W' or name[-2]=='M':
+        #print(name[-2])
+        name = name[:-3]
+        stock[i,nnom]= name
+        #print(name)
+  return stock
+
+def findindexmarque(ligne, lsmarques, colonnemarque = colonnemarque):
+  for i in range(len(lsmarques)):
+    if ligne[colonnemarque] == lsmarques[i]:
+      return i
+  return None 
+
+def findindexmodele(ligne, lsmodele, colonnename = colonnename):
+  for i in range(len(lsmodele)):
+    if ligne[colonnename] == lsmodele[i]:
+      return i
+  return None
+
+def tailletoindex (taille):
+  return int(float(taille.replace(',','.'))*2-35*2)
+
+def indextotaille (index):
+  return str((70+index)/2).replace('.',',').replace(',0','')
+
+def creerstructureshoes(stock, colonnemarque = colonnemarque, colonnename = colonnename, colonnetaille = colonnesize, filesize = filesize):
+  tablestock = np.copy(stock)
+  lsmarques = set(stock[:,colonnemarque])
+  lsmarques = table(lsmarques)
+  lsmarques = set(stock[:,colonnemarque])
+  lsmarques = table(lsmarques)
+  listesmodeles = [[] for i in range(len(lsmarques))]
+  for i in range(tableshoes.shape[0]):
+    marque = tableshoes[i,colonnemarque]
+    modele = tableshoes[i,colonnename]
+    indexmarque = findindexmarque(tableshoes[i,:],lsmarques)
+    if indexmarque != None:
+      listesmodeles[indexmarque].append(modele)
+
+  max = 0 
+  for i in range(len(listesmodeles)):
+    if len(listesmodeles[i]) > max:
+      max = len(listesmodeles[i])
+  newstock = np.zeros((len(lsmarques),max,len(filesize)))
+  return newstock
+
+def ajoutpaire(ligne, stocktrie, colonnemarque = colonnemarque, colonnename = colonnename, colonnetaille = colonnesize):
+  marque = ligne[colonnemarque]
+  modele = ligne[colonnename]
+  taille = ligne[colonnetaille]
+  indexmarque = findindexmarque(ligne, lsmarques)
+  indexmodele = findindexmodele(ligne, listesmodeles[indexmarque])
+  indextaille = tailletoindex(taille)
+  stocktrie[indexmarque,indexmodele,indextaille]+=1
+  return None 
+
+def remplirstock(stock, stocktrie, colonnemarque = colonnemarque, colonnename = colonnename, colonnetaille = colonnesize):
+  nbpaire = stock.shape[0]
+  for i in range (nbpaire):
+    ligne = stock[i,:]
+    ajoutpaire(ligne, stocktrie, colonnemarque = colonnemarque, colonnename = colonnename, colonnetaille = colonnesize)
+  return stocktrie
+
+def triparfranchise(stock, shoefinder, colonnename, colonnemarque, colonnetaille, nnom = nonom):
+  tableshoes = trishoes(stock, colonnecategorie = colonnecategorie)
+  tablestock = np.copy(stock)
+  global filesize
+  lsmarques = set(stock[:,colonnemarque])
+  lsmarques = table(lsmarques)
+  listesmodeles = [[] for i in range(len(lsmarques))]
+  for i in range(tableshoes.shape[0]):
+    marque = tableshoes[i,colonnemarque]
+    modele = tableshoes[i,colonnename]
+    indexmarque = findindexmarque(tableshoes[i,:],lsmarques)
+    if indexmarque != None:
+      listesmodeles[indexmarque].append(modele)
+
+                   
+
+                           
