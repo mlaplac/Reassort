@@ -1,0 +1,5 @@
+class Stock :
+
+  def _init_(self, filename):
+    self.fn = filename 
+    
